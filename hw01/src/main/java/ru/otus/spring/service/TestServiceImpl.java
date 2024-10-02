@@ -2,6 +2,7 @@ package ru.otus.spring.service;
 
 import lombok.RequiredArgsConstructor;
 import ru.otus.spring.dao.QuestionDao;
+import ru.otus.spring.domain.Answer;
 import ru.otus.spring.domain.Question;
 
 import java.io.FileNotFoundException;
@@ -22,10 +23,14 @@ public class TestServiceImpl implements TestService {
 
         List<Question> questions = questionDao.findAll();
 
-        questions.forEach(q -> {
+        for (Question q: questions) {
             ioService.printLine(q.text());
-            q.answers().forEach(a -> ioService.printLine(a.text()));
+            int counter = 1;
+            for (Answer a: q.answers()) {
+                ioService.printFormattedLine("%d. " + a.text(), counter);
+                counter++;
+            }
             ioService.printLine("------------------------------");
-        });
+        }
     }
 }
