@@ -5,8 +5,6 @@ import ru.otus.spring.dao.QuestionDao;
 import ru.otus.spring.domain.Answer;
 import ru.otus.spring.domain.Question;
 
-import java.io.FileNotFoundException;
-import java.net.URISyntaxException;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -17,7 +15,7 @@ public class TestServiceImpl implements TestService {
     private final QuestionDao questionDao;
 
     @Override
-    public void executeTest() throws FileNotFoundException, URISyntaxException {
+    public void executeTest() {
         ioService.printLine("");
         ioService.printFormattedLine("Please answer the questions below%n");
 
