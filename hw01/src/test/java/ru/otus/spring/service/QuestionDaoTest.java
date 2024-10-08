@@ -11,7 +11,7 @@ import ru.otus.spring.domain.Question;
 import java.util.ArrayList;
 import java.util.List;
 
-class TestServiceTest {
+class QuestionDaoTest {
 
     @Test
     void CsvQuestionDaoReturnsCorrectLines() {
