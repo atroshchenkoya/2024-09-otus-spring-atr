@@ -1,16 +1,17 @@
 package ru.otus.spring.service;
 
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import ru.otus.spring.dao.CsvQuestionDao;
+import org.springframework.test.util.ReflectionTestUtils;
+import ru.otus.spring.dao.QuestionDao;
 import ru.otus.spring.domain.Answer;
 import ru.otus.spring.domain.Question;
 
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
 import java.util.ArrayList;
 import java.util.List;
-
 
 class QuestionDaoTest {
 
@@ -18,8 +19,29 @@ class QuestionDaoTest {
     void CsvQuestionDaoReturnsCorrectLines() {
 
         ApplicationContext context = new ClassPathXmlApplicationContext("/spring-context.xml");
-        var questionDao = context.getBean(CsvQuestionDao.class);
+        ReflectionTestUtils.setField(context
+                .getBean("testFileNameProvider"), "testFileName", "questionsTest.csv");
 
+        QuestionDao questionDao = (QuestionDao) context.getBean("questionDao");
+
+        List<String> expectedStrings = getStrings();
+        List<String> actualStrings = new ArrayList<>();
+
+        List<Question> questions = questionDao.findAll();
+
+        for (Question q: questions) {
+            actualStrings.add(q.text());
+            int counter = 1;
+            for (Answer a: q.answers()) {
+                actualStrings.add(counter + ". " + a.text());
+                counter++;
+            }
+            actualStrings.add("------------------------------");
+        }
+        Assertions.assertTrue(actualStrings.containsAll(expectedStrings));
+    }
+
+    private static List<String> getStrings() {
         String correctLine = """
                 Is there life on Mars?
                 1. Science doesn't know this yet
@@ -45,22 +67,6 @@ class QuestionDaoTest {
                 ------------------------------
                 
                 """;
-        List<String> expectedStrings = new ArrayList<>(List.of(correctLine.split("\n")));
-        List<String> actualStrings = new ArrayList<>();
-
-        List<Question> questions = questionDao.findAll();
-
-        for (Question q: questions) {
-            actualStrings.add(q.text());
-            int counter = 1;
-            for (Answer a: q.answers()) {
-                actualStrings.add(counter + ". " + a.text());
-                counter++;
-            }
-            actualStrings.add("------------------------------");
-        }
-        Assertions.assertTrue(actualStrings.containsAll(expectedStrings));
-
+        return new ArrayList<>(List.of(correctLine.split("\n")));
     }
-
 }
