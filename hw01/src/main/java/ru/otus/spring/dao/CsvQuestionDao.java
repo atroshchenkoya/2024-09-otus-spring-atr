@@ -9,6 +9,7 @@ import ru.otus.spring.dao.dto.QuestionDto;
 import ru.otus.spring.domain.Question;
 import ru.otus.spring.exceptions.QuestionReadException;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.List;
@@ -21,16 +22,21 @@ public class CsvQuestionDao implements QuestionDao {
     @Override
     public List<Question> findAll() {
 
-        InputStream inputStream = getInputStream();
+        try (InputStream inputStream = getInputStream();
+             InputStreamReader inputStreamReader = new InputStreamReader(inputStream)) {
 
-        CSVParser csvParser = new CSVParserBuilder().withSeparator(';').build();
-        List<QuestionDto> questionDtoList = new CsvToBeanBuilder(new InputStreamReader(inputStream))
-                .withSkipLines(1)
-                .withSeparator(csvParser.getSeparator())
-                .withType(QuestionDto.class)
-                .build()
-                .parse();
-        return questionDtoList.stream().map(QuestionDto::toDomainObject).toList();
+            CSVParser csvParser = new CSVParserBuilder().withSeparator(';').build();
+            List<QuestionDto> questionDtoList = new CsvToBeanBuilder<QuestionDto>(inputStreamReader)
+                    .withSkipLines(1)
+                    .withSeparator(csvParser.getSeparator())
+                    .withType(QuestionDto.class)
+                    .build()
+                    .parse();
+            return questionDtoList.stream().map(QuestionDto::toDomainObject).toList();
+
+        } catch (IOException e) {
+            throw new QuestionReadException("Cant read from file!");
+        }
     }
 
     private InputStream getInputStream() {
