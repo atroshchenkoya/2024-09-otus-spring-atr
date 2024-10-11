@@ -1,8 +1,9 @@
 package ru.otus.spring.service;
 
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.test.util.ReflectionTestUtils;
+import org.junit.jupiter.api.BeforeAll;
+import ru.otus.spring.config.AppProperties;
+import ru.otus.spring.config.TestFileNameProvider;
+import ru.otus.spring.dao.CsvQuestionDao;
 import ru.otus.spring.dao.QuestionDao;
 import ru.otus.spring.domain.Answer;
 import ru.otus.spring.domain.Question;
@@ -10,21 +11,28 @@ import ru.otus.spring.domain.Question;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
 class QuestionDaoTest {
 
+    static TestFileNameProvider testFileNameProvider;
+    static QuestionDao questionDao;
+
+    @BeforeAll
+    static void beforeAll() {
+        testFileNameProvider = new AppProperties("questionsTest.csv");
+        questionDao = new CsvQuestionDao(testFileNameProvider);
+    }
+
     @Test
-    void CsvQuestionDaoReturnsCorrectLines() {
-
-        ApplicationContext context = new ClassPathXmlApplicationContext("/spring-context.xml");
-        ReflectionTestUtils.setField(context
-                .getBean("testFileNameProvider"), "testFileName", "questionsTest.csv");
-
-        QuestionDao questionDao = (QuestionDao) context.getBean("questionDao");
-
-        List<String> expectedStrings = getStrings();
+    void CsvQuestionDaoReturnsCorrectLines2() {
+        String expectedStringsFileName = "expectedLines.txt";
+        List<String> expectedStrings = new ArrayList<>();
         List<String> actualStrings = new ArrayList<>();
 
         List<Question> questions = questionDao.findAll();
@@ -38,35 +46,17 @@ class QuestionDaoTest {
             }
             actualStrings.add("------------------------------");
         }
+        try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(expectedStringsFileName)) {
+            assert inputStream != null;
+            try (InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+                 BufferedReader bufferedReader = new BufferedReader(inputStreamReader)) {
+                while (bufferedReader.ready()) {
+                    expectedStrings.add(bufferedReader.readLine());
+                }
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         Assertions.assertTrue(actualStrings.containsAll(expectedStrings));
-    }
-
-    private static List<String> getStrings() {
-        String correctLine = """
-                Is there life on Mars?
-                1. Science doesn't know this yet
-                2. Certainly. The red UFO is from Mars. And green is from Venus
-                3. Absolutely not
-                ------------------------------
-                How should resources be loaded form jar in Java?
-                1. ClassLoader#geResourceAsStream or ClassPathResource#getInputStream
-                2. ClassLoader#geResource#getFile + FileReader
-                3. Wingardium Leviosa
-                ------------------------------
-                Which option is a good way to handle the exception?
-                1. @SneakyThrow
-                2. e.printStackTrace()
-                3. Rethrow with wrapping in business exception (for example, QuestionReadException)
-                4. Ignoring exception
-                ------------------------------
-                How to get a good mark?
-                1. Try hard
-                2. Learn everything
-                3. Be lucky
-                4. Ignore your tutor
-                ------------------------------
-                
-                """;
-        return new ArrayList<>(List.of(correctLine.split("\n")));
     }
 }
