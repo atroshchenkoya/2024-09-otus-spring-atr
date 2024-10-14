@@ -25,7 +25,7 @@ class TestServiceImplTest {
     StreamsIOService ioService;
 
     @Test
-    public void doTest() {
+    void countOfRightAnswersShouldBeCorrect() {
 
         TestServiceImpl testService = new TestServiceImpl(ioService, questionDao);
 
