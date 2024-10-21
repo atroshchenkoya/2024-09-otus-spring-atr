@@ -12,9 +12,9 @@ import ru.otus.hw.domain.TestResult;
 @AllArgsConstructor
 public class TestServiceImpl implements TestService {
 
-    private IOService ioService;
+    private final IOService ioService;
 
-    private QuestionDao questionDao;
+    private final QuestionDao questionDao;
 
     @Override
     public TestResult executeTestFor(Student student) {

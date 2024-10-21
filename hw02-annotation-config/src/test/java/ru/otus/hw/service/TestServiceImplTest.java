@@ -1,11 +1,14 @@
 package ru.otus.hw.service;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.otus.hw.dao.CsvQuestionDao;
 import ru.otus.hw.domain.Answer;
@@ -17,12 +20,29 @@ import java.util.List;
 
 @ExtendWith(MockitoExtension.class)
 class TestServiceImplTest {
+
+    private AutoCloseable closeable;
+
     @InjectMocks
     private TestServiceImpl testService;
     @Mock
     private CsvQuestionDao questionDao;
     @Mock
     private StreamsIOService ioService;
+
+    @BeforeEach
+    public void prepare() {
+        testService = null;
+        closeable = MockitoAnnotations.openMocks(this);
+    }
+    @AfterEach
+    void closeService() {
+        try {
+            closeable.close();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     @Test
     void countOfRightAnswersShouldBeCorrect() {
