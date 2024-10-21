@@ -3,9 +3,10 @@ package ru.otus.hw.repository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import ru.otus.hw.config.AppPropertiesTest;
-import ru.otus.hw.config.TestFileNameProvider;
-import ru.otus.hw.dao.CsvQuestionDao;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestPropertySource;
+import ru.otus.hw.Application;
 import ru.otus.hw.dao.QuestionDao;
 import ru.otus.hw.domain.Answer;
 import ru.otus.hw.domain.Question;
@@ -17,15 +18,16 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
+@ContextConfiguration
+@TestPropertySource("classpath:application.properties")
 class CsvQuestionDaoTest {
 
-    static TestFileNameProvider testFileNameProvider;
     static QuestionDao questionDao;
 
     @BeforeAll
     static void beforeAll() {
-        testFileNameProvider = new AppPropertiesTest(3,"questionsTest.csv");
-        questionDao = new CsvQuestionDao(testFileNameProvider);
+        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(Application.class);
+        questionDao = context.getBean(QuestionDao.class);
     }
 
     @Test
