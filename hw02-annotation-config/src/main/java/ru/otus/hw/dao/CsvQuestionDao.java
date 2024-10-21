@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.List;
+import java.util.Objects;
 
 @Repository
 @RequiredArgsConstructor
@@ -43,7 +44,7 @@ public class CsvQuestionDao implements QuestionDao {
 
     private InputStream getInputStream() {
         InputStream inputStream = getClass().getClassLoader().getResourceAsStream(fileNameProvider.getTestFileName());
-        if (inputStream == null) {
+        if (Objects.isNull(inputStream)) {
             throw new QuestionReadException("file not found!");
         }
         return inputStream;

@@ -1,6 +1,6 @@
 package ru.otus.hw.service;
 
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.otus.hw.dao.QuestionDao;
 import ru.otus.hw.domain.Answer;
@@ -9,12 +9,12 @@ import ru.otus.hw.domain.Student;
 import ru.otus.hw.domain.TestResult;
 
 @Service
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class TestServiceImpl implements TestService {
 
-    private final IOService ioService;
+    private IOService ioService;
 
-    private final QuestionDao questionDao;
+    private QuestionDao questionDao;
 
     @Override
     public TestResult executeTestFor(Student student) {
@@ -38,8 +38,7 @@ public class TestServiceImpl implements TestService {
     }
 
     private static boolean isAnswerValid(Question q, int chosenAnswerNum) {
-        Answer correctAnswer = q.answers().stream().filter(Answer::isCorrect).findFirst().orElse(null);
-        return chosenAnswerNum == q.answers().indexOf(correctAnswer) + 1;
+        return q.answers().get(chosenAnswerNum - 1).isCorrect();
     }
 
     private int getChosenAnswerNum(int answerCount) {

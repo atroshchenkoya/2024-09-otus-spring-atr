@@ -3,11 +3,10 @@ package ru.otus.hw.service;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.mockito.junit.jupiter.MockitoSettings;
-import org.mockito.quality.Strictness;
 import ru.otus.hw.dao.CsvQuestionDao;
 import ru.otus.hw.domain.Answer;
 import ru.otus.hw.domain.Question;
@@ -17,23 +16,22 @@ import ru.otus.hw.domain.TestResult;
 import java.util.List;
 
 @ExtendWith(MockitoExtension.class)
-@MockitoSettings(strictness = Strictness.LENIENT)
 class TestServiceImplTest {
+    @InjectMocks
+    private TestServiceImpl testService;
     @Mock
     private CsvQuestionDao questionDao;
     @Mock
-    StreamsIOService ioService;
+    private StreamsIOService ioService;
 
     @Test
     void countOfRightAnswersShouldBeCorrect() {
 
-        TestServiceImpl testService = new TestServiceImpl(ioService, questionDao);
+        Answer answer1Question1 = new Answer("Fa Fq text", true);
+        Answer answer2Question1 = new Answer("Sa Fq text", false);
+        Question question1 = new Question("First q text", List.of(answer1Question1, answer2Question1));
 
-        Answer a1q1 = new Answer("Fa Fq text", true);
-        Answer a2q1 = new Answer("Sa Fq text", false);
-        Question q1 = new Question("First q text", List.of(a1q1, a2q1));
-
-        Mockito.when(questionDao.findAll()).thenReturn(List.of(q1, q1 ,q1 ,q1));
+        Mockito.when(questionDao.findAll()).thenReturn(List.of(question1, question1 ,question1 ,question1));
         Mockito.doNothing().when(ioService).printLine(Mockito.any());
         Mockito.when(ioService.readIntForRangeWithPrompt(
                 Mockito.anyInt(),
@@ -41,7 +39,7 @@ class TestServiceImplTest {
                 Mockito.anyString(),
                 Mockito.anyString()))
                 .thenReturn(1);
-        Mockito.doNothing().when(ioService).printFormattedLine(Mockito.any());
+        Mockito.doNothing().when(ioService).printFormattedLine(Mockito.any(), Mockito.any());
 
         TestResult testResult = testService.executeTestFor(new Student("pop", "hop"));
 
