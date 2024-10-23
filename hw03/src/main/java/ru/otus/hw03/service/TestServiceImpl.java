@@ -43,11 +43,10 @@ public class TestServiceImpl implements TestService {
     }
 
     private int getChosenAnswerNum(int answerCount) {
-        String prompt = "Type number of the right answer form 1 to " + answerCount;
-        String errorMessage = "Incorrect symbol(s), try again";
+        String prompt = "TestService.prompt.the.questions";
+        String errorMessage = "TestService.error.the.questions";
 
         return ioService.readIntForRangeWithPrompt(1, answerCount, prompt, errorMessage);
-
     }
 
     private void printQuestion(Question q) {

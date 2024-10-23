@@ -1,16 +1,15 @@
 package ru.otus.hw03.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
 @Service
 public class LocalizedIOServiceImpl implements LocalizedIOService {
 
-    private final LocalizedMessagesService localizedMessagesService;
+    private final LocalizedMessagesServiceImpl localizedMessagesService;
 
-    private final IOService ioService;
+    private final StreamsIOService ioService;
 
     @Override
     public void printLine(String s) {
@@ -39,7 +38,11 @@ public class LocalizedIOServiceImpl implements LocalizedIOService {
 
     @Override
     public int readIntForRangeWithPrompt(int min, int max, String prompt, String errorMessage) {
-        return ioService.readIntForRangeWithPrompt(min, max, prompt, errorMessage);
+        return ioService.readIntForRangeWithPrompt(
+                min,
+                max,
+                localizedMessagesService.getMessage(prompt),
+                localizedMessagesService.getMessage(errorMessage));
     }
 
     @Override
