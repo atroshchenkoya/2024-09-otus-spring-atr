@@ -13,7 +13,6 @@ public class Hw03Application {
 
 	public static void main(String[] args) {
 		ConfigurableApplicationContext context = SpringApplication.run(Hw03Application.class, args);
-		System.out.println(context.getBean(AppProperties.class).getLocale());
 		var testRunnerService = context.getBean(TestRunnerService.class);
 		testRunnerService.run();
 	}
