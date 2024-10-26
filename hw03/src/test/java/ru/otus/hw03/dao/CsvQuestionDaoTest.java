@@ -10,6 +10,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import ru.otus.hw03.config.TestFileNameProvider;
 import ru.otus.hw03.domain.Answer;
 import ru.otus.hw03.domain.Question;
+import ru.otus.hw03.exceptions.QuestionReadException;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -53,7 +54,7 @@ class CsvQuestionDaoTest {
                 }
             }
         } catch (IOException e) {
-            throw new QuestionReadException(e);
+            throw new QuestionReadException("Can't read file " + expectedStringsFileName);
         }
         Assertions.assertTrue(actualStrings.containsAll(expectedStrings));
     }
