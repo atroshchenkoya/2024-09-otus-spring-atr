@@ -1,6 +1,10 @@
 target/
 dependency-reduced-pom.xml
 
+hw03/.mvn/wrapper/maven-wrapper.properties
+hw03/mvnw.cmd
+hw03/mvnw
+
 ### STS ###
 .apt_generated
 .classpath
