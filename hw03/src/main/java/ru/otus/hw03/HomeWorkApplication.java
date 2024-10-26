@@ -9,10 +9,10 @@ import ru.otus.hw03.service.TestRunnerService;
 
 @SpringBootApplication
 @EnableConfigurationProperties(AppProperties.class)
-public class Hw03Application {
+public class HomeWorkApplication {
 
 	public static void main(String[] args) {
-		ConfigurableApplicationContext context = SpringApplication.run(Hw03Application.class, args);
+		ConfigurableApplicationContext context = SpringApplication.run(HomeWorkApplication.class, args);
 		var testRunnerService = context.getBean(TestRunnerService.class);
 		testRunnerService.run();
 	}

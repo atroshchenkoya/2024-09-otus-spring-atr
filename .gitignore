@@ -1,0 +1,8 @@
+**/target
+mvnw
+mvnw.cmd
+.idea
+
+hw03/mvnw
+hw03/mvnw.cmd
+hw03/.mvn/wrapper/maven-wrapper.properties

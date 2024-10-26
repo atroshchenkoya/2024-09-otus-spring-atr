@@ -1,13 +1,13 @@
 package ru.otus.hw03.dao;
 
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.SpringApplication;
-import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestPropertySource;
-import ru.otus.hw03.Hw03Application;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
+import ru.otus.hw03.config.TestFileNameProvider;
 import ru.otus.hw03.domain.Answer;
 import ru.otus.hw03.domain.Question;
 
@@ -18,20 +18,17 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
-@ContextConfiguration
-@TestPropertySource("classpath:application.yaml")
+@ExtendWith(MockitoExtension.class)
 class CsvQuestionDaoTest {
 
-    static QuestionDao questionDao;
-
-    @BeforeAll
-    static void beforeAll() {
-        ConfigurableApplicationContext context = SpringApplication.run(Hw03Application.class);
-        questionDao = context.getBean(QuestionDao.class);
-    }
+    @InjectMocks
+    private CsvQuestionDao questionDao;
+    @Mock
+    private TestFileNameProvider fileNameProvider;
 
     @Test
     void CsvQuestionDaoReturnsCorrectLines2() {
+        Mockito.when(fileNameProvider.getTestFileName()).thenReturn("questions.csv");
         String expectedStringsFileName = "expectedLines.txt";
         List<String> expectedStrings = new ArrayList<>();
         List<String> actualStrings = new ArrayList<>();
