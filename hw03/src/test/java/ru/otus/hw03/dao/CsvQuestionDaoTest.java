@@ -2,11 +2,11 @@ package ru.otus.hw03.dao;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.ContextConfiguration;
 import ru.otus.hw03.config.TestFileNameProvider;
 import ru.otus.hw03.domain.Answer;
 import ru.otus.hw03.domain.Question;
@@ -19,13 +19,14 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
-@ExtendWith(MockitoExtension.class)
+@SpringBootTest
+@ContextConfiguration(classes = CsvQuestionDao.class)
 class CsvQuestionDaoTest {
 
-    @InjectMocks
-    private CsvQuestionDao questionDao;
-    @Mock
+    @MockBean
     private TestFileNameProvider fileNameProvider;
+    @Autowired
+    private CsvQuestionDao questionDao;
 
     @Test
     void csvQuestionDaoReturnsCorrectLines() {

@@ -2,11 +2,11 @@ package ru.otus.hw03.service;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.ContextConfiguration;
 import ru.otus.hw03.dao.CsvQuestionDao;
 import ru.otus.hw03.domain.Answer;
 import ru.otus.hw03.domain.Question;
@@ -15,15 +15,16 @@ import ru.otus.hw03.domain.TestResult;
 
 import java.util.List;
 
-@ExtendWith(MockitoExtension.class)
+@SpringBootTest
+@ContextConfiguration(classes = TestServiceImpl.class)
 class TestServiceImplTest {
 
-    @InjectMocks
-    private TestServiceImpl testService;
-    @Mock
+    @MockBean
     private CsvQuestionDao questionDao;
-    @Mock
+    @MockBean
     private LocalizedIOService ioService;
+    @Autowired
+    private TestServiceImpl testService;
 
     @Test
     void countOfRightAnswersShouldBeCorrect() {
