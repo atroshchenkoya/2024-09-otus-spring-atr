@@ -1,9 +1,8 @@
+HELP.md
 target/
-dependency-reduced-pom.xml
-
-hw03/.mvn/wrapper/maven-wrapper.properties
-hw03/mvnw.cmd
-hw03/mvnw
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
 
 ### STS ###
 .apt_generated
@@ -22,8 +21,13 @@ hw03/mvnw
 
 ### NetBeans ###
 /nbproject/private/
-/build/
 /nbbuild/
 /dist/
 /nbdist/
 /.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### VS Code ###
+.vscode/
