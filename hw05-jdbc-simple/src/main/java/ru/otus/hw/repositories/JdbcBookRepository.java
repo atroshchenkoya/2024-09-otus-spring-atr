@@ -1,9 +1,11 @@
 package ru.otus.hw.repositories;
 
-import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Repository;
+import ru.otus.hw.exceptions.EntityNotFoundException;
 import ru.otus.hw.models.Author;
 import ru.otus.hw.models.Book;
 import ru.otus.hw.models.Genre;
@@ -16,17 +18,32 @@ import java.util.Optional;
 @Repository
 public class JdbcBookRepository implements BookRepository {
 
-    private final JdbcOperations jdbc;
+    private final NamedParameterJdbcTemplate jdbc;
 
-    public JdbcBookRepository(JdbcOperations jdbc) {
+    public JdbcBookRepository(NamedParameterJdbcTemplate jdbc) {
         this.jdbc = jdbc;
     }
 
     @Override
     public Optional<Book> findById(long id) {
-        return Optional.empty();
-    }
+        String sql = """
+                SELECT b.id AS book_id,
+                       b.title,
+                       a.id AS author_id,
+                       a.full_name AS author_name,
+                       g.id AS genre_id,
+                       g.name AS genre_name
+                FROM books b
+                JOIN authors a ON b.author_id = a.id
+                JOIN genres g ON b.genre_id = g.id
+                WHERE b.id = :id""";
 
+        MapSqlParameterSource parameters = new MapSqlParameterSource()
+                .addValue("id", id);
+        return jdbc.query(sql, parameters, new BookRowMapper())
+                .stream()
+                .findFirst();
+    }
     @Override
     public List<Book> findAll() {
         String sql = """
@@ -52,22 +69,42 @@ public class JdbcBookRepository implements BookRepository {
 
     @Override
     public void deleteById(long id) {
-        //...
+        String sql = "DELETE FROM books WHERE id = :id";
+        MapSqlParameterSource parameters = new MapSqlParameterSource()
+                .addValue("id", id);
+        jdbc.update(sql, parameters);
     }
 
     private Book insert(Book book) {
         var keyHolder = new GeneratedKeyHolder();
-
-        //...
-
+        String sql = "INSERT INTO books (title, author_id, genre_id) VALUES (:title, :authorId, :genreId)";
+        MapSqlParameterSource parameters = new MapSqlParameterSource()
+                .addValue("title", book.getTitle())
+                .addValue("authorId", book.getAuthor().getId())
+                .addValue("genreId", book.getGenre().getId());
+        jdbc.update(sql, parameters, keyHolder);
         //noinspection DataFlowIssue
         book.setId(keyHolder.getKeyAs(Long.class));
         return book;
     }
 
-    private Book update(Book book) {
-        //...
-        // Выбросить EntityNotFoundException если не обновлено ни одной записи в БД
+    public Book update(Book book) {
+        String sql = """
+                UPDATE books
+                SET title = :title, author_id = :authorId, genre_id = :genreId
+                WHERE id = :id
+                """;
+
+        MapSqlParameterSource parameters = new MapSqlParameterSource()
+                .addValue("title", book.getTitle())
+                .addValue("authorId", book.getAuthor().getId())
+                .addValue("genreId", book.getGenre().getId())
+                .addValue("id", book.getId());
+        int rowsAffected = jdbc.update(sql, parameters);
+
+        if (rowsAffected == 0) {
+            throw new EntityNotFoundException("No book found with id " + book.getId() + " to update.");
+        }
         return book;
     }
 
