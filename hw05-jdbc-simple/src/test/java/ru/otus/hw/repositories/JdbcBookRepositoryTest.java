@@ -8,6 +8,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.context.annotation.Import;
+import ru.otus.hw.exceptions.EntityNotFoundException;
 import ru.otus.hw.models.Author;
 import ru.otus.hw.models.Book;
 import ru.otus.hw.models.Genre;
@@ -16,6 +17,7 @@ import java.util.List;
 import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
 @DisplayName("Репозиторий на основе Jdbc для работы с книгами ")
 @JdbcTest
@@ -100,6 +102,26 @@ class JdbcBookRepositoryTest {
         assertThat(repositoryJdbc.findById(1L)).isPresent();
         repositoryJdbc.deleteById(1L);
         assertThat(repositoryJdbc.findById(1L)).isEmpty();
+    }
+
+    @DisplayName("должен выбросить исключение, если книга не найдена при удалении")
+    @Test
+    void shouldThrowExceptionWhenDeletingNonExistentBook() {
+        long nonExistentBookId = 999L;
+
+        assertThatThrownBy(() -> repositoryJdbc.deleteById(nonExistentBookId))
+                .isInstanceOf(EntityNotFoundException.class)
+                .hasMessageContaining("No book found with id " + nonExistentBookId + " to delete.");
+    }
+
+    @DisplayName("должен выбросить исключение, если книга не найдена при обновлении")
+    @Test
+    void shouldThrowExceptionWhenUpdatingNonExistentBook() {
+        Book bookToUpdate = new Book(999L, "NonExistentBook", dbAuthors.get(0), dbGenres.get(0));
+
+        assertThatThrownBy(() -> repositoryJdbc.save(bookToUpdate))
+                .isInstanceOf(EntityNotFoundException.class)
+                .hasMessageContaining("No book found with id " + bookToUpdate.getId() + " to update.");
     }
 
     private static List<Author> getDbAuthors() {

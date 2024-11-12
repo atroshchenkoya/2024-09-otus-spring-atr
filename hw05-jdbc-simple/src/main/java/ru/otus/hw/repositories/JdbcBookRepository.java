@@ -72,7 +72,10 @@ public class JdbcBookRepository implements BookRepository {
         String sql = "DELETE FROM books WHERE id = :id";
         MapSqlParameterSource parameters = new MapSqlParameterSource()
                 .addValue("id", id);
-        jdbc.update(sql, parameters);
+        int rowsAffected = jdbc.update(sql, parameters);
+        if (rowsAffected == 0) {
+            throw new EntityNotFoundException("No book found with id " + id + " to delete.");
+        }
     }
 
     private Book insert(Book book) {
