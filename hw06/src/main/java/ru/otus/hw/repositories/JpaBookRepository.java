@@ -4,7 +4,6 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 import ru.otus.hw.exceptions.EntityNotFoundException;
 import ru.otus.hw.models.Book;
 
@@ -12,7 +11,6 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-@Transactional
 public class JpaBookRepository implements BookRepository {
 
     @PersistenceContext
@@ -26,11 +24,8 @@ public class JpaBookRepository implements BookRepository {
 
     @Override
     public List<Book> findAll() {
-        String jpql = "SELECT b FROM Book b " +
-                "JOIN FETCH b.author a " +
-                "JOIN FETCH b.genre g " +
-                "LEFT JOIN FETCH b.comments c";
-        TypedQuery<Book> query = entityManager.createQuery(jpql, Book.class);
+        TypedQuery<Book> query = entityManager.createQuery("SELECT b FROM Book b", Book.class);
+        query.setHint("javax.persistence.fetchgraph", entityManager.getEntityGraph("Book.full"));
         return query.getResultList();
     }
 
@@ -58,9 +53,6 @@ public class JpaBookRepository implements BookRepository {
         if (existingBook == null) {
             throw new EntityNotFoundException("No book found with id " + book.getId() + " to update.");
         }
-        existingBook.setTitle(book.getTitle());
-        existingBook.setAuthor(book.getAuthor());
-        existingBook.setGenre(book.getGenre());
-        return entityManager.merge(existingBook);
+        return entityManager.merge(book);
     }
 }

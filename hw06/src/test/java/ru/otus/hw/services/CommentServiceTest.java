@@ -1,15 +1,16 @@
-package ru.otus.hw.integration;
+package ru.otus.hw.services;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 import org.hibernate.Hibernate;
+import org.springframework.test.annotation.DirtiesContext;
 import ru.otus.hw.models.Book;
 import ru.otus.hw.models.Comment;
+import ru.otus.hw.repositories.BookRepository;
 import ru.otus.hw.repositories.JpaBookRepository;
 import ru.otus.hw.repositories.JpaCommentRepository;
-import ru.otus.hw.services.CommentServiceImpl;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,13 +19,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
 @Import({CommentServiceImpl.class, JpaCommentRepository.class, JpaBookRepository.class})
-public class CommentServiceImplTest {
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
+public class CommentServiceTest {
 
     @Autowired
-    private CommentServiceImpl commentService;
+    private CommentService commentService;
 
     @Autowired
-    private JpaBookRepository bookRepository;
+    private BookRepository bookRepository;
 
     @Test
     public void testInsertAndFetchComment() {
@@ -65,7 +67,6 @@ public class CommentServiceImplTest {
 
     @Test
     public void testUpdateCommentContent() {
-        // Сохраняем книгу и комментарий
         Book book = new Book();
         book.setTitle("Update Test Book");
         book = bookRepository.save(book);

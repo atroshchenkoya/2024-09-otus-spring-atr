@@ -1,10 +1,10 @@
-create table authors (
+create table IF NOT EXISTS authors (
     id BIGINT AUTO_INCREMENT,
     full_name varchar(255),
     primary key (id)
 );
 
-create table genres (
+create table IF NOT EXISTS genres (
     id BIGINT AUTO_INCREMENT,
     name varchar(255),
     primary key (id)
@@ -18,7 +18,7 @@ create table books (
     primary key (id)
 );
 
-CREATE TABLE comments (
+CREATE TABLE IF NOT EXISTS comments (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     content TEXT NOT NULL,
     book_id BIGINT,
