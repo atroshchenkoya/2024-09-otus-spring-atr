@@ -1,8 +1,8 @@
 insert into authors(full_name)
-values ('Author_1'), ('Author_2'), ('Author_3');
+values ('Author_100'), ('Author_200'), ('Author_300');
 
 insert into genres(name)
-values ('Genre_1'), ('Genre_2'), ('Genre_3');
+values ('Genre_100'), ('Genre_200'), ('Genre_300');
 
 insert into books(title, author_id, genre_id)
-values ('BookTitle_1', 1, 1), ('BookTitle_2', 2, 2), ('BookTitle_3', 3, 3);
+values ('BookTitle_100', 1, 1), ('BookTitle_200', 2, 2), ('BookTitle_300', 3, 3);
