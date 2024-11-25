@@ -1,0 +1,17 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:maindb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  h2:
+    console:
+      enabled: true
+  jpa:
+    hibernate:
+      ddl-auto: none # Используем SQL-скрипты для создания схемы
+  sql:
+    init:
+      mode: always
+      data-locations: classpath:data.sql
+      schema-locations: classpath:schema.sql

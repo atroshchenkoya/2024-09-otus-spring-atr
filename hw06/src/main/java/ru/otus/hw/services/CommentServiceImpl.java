@@ -14,38 +14,43 @@ import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
-@Transactional
 public class CommentServiceImpl implements CommentService {
 
     private final CommentRepository commentRepository;
     private final BookRepository bookRepository;
 
     @Override
+    @Transactional(readOnly = true)
     public Optional<Comment> findById(long id) {
         return commentRepository.findById(id);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Comment> findAll() {
         return commentRepository.findAll();
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Comment> findByBookId(long bookId) {
         return commentRepository.findByBookId(bookId);
     }
 
     @Override
+    @Transactional
     public Comment insert(String content, long bookId) {
         return save(0, content, bookId);
     }
 
     @Override
+    @Transactional
     public Comment update(long id, String content, long bookId) {
         return save(id, content, bookId);
     }
 
     @Override
+    @Transactional
     public void deleteById(long id) {
         commentRepository.deleteById(id);
     }
