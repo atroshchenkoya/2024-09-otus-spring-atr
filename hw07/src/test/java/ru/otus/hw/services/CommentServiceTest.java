@@ -9,8 +9,6 @@ import org.springframework.test.annotation.DirtiesContext;
 import ru.otus.hw.models.Book;
 import ru.otus.hw.models.Comment;
 import ru.otus.hw.repositories.BookRepository;
-import ru.otus.hw.repositories.JpaBookRepository;
-import ru.otus.hw.repositories.JpaCommentRepository;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,8 +16,8 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
-@Import({CommentServiceImpl.class, JpaCommentRepository.class, JpaBookRepository.class})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
+@Import({CommentServiceImpl.class})
 public class CommentServiceTest {
 
     @Autowired
