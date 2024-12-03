@@ -1,5 +1,6 @@
 package ru.otus.hw.services;
 
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -14,6 +15,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @DataJpaTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
@@ -78,4 +80,24 @@ public class CommentServiceTest {
         assertThat(updatedComment.getBook()).isNotNull();
         assertThat(updatedComment.getBook().getTitle()).isEqualTo("Update Test Book");
     }
+
+    @Test
+    public void testEntityNotFoundExceptionOnInsert() {
+        long nonExistBookId = 999L;
+
+        assertThatThrownBy(() -> commentService.insert("Invalid Comment", nonExistBookId))
+                .isInstanceOf(EntityNotFoundException.class)
+                .hasMessageContaining("Book with id " + nonExistBookId + " not found");
+    }
+
+    @Test
+    public void testEntityNotFoundExceptionOnUpdate() {
+        long nonExistCommentId = 999L;
+        long nonExistBookId = 999L;
+
+        assertThatThrownBy(() -> commentService.update(nonExistCommentId, "Updated Content", nonExistBookId))
+                .isInstanceOf(EntityNotFoundException.class)
+                .hasMessageContaining("Book with id " + nonExistBookId + " not found");
+    }
+
 }
