@@ -23,31 +23,31 @@ public class CommentCommands {
     }
 
     @ShellMethod(value = "Find comment by id", key = "ccid")
-    public String findCommentById(long id) {
+    public String findCommentById(String id) {
         return commentService.findById(id)
                 .map(commentConverter::commentToString)
-                .orElse("Comment with id %d not found".formatted(id));
+                .orElse("Comment with id %s not found".formatted(id));
     }
 
     @ShellMethod(value = "Insert comment", key = "cins")
-    public String insertComment(String content, long bookId) {
+    public String insertComment(String content, String bookId) {
         var savedComment = commentService.insert(content, bookId);
         return commentConverter.commentToString(savedComment);
     }
 
     @ShellMethod(value = "Update comment", key = "cupd")
-    public String updateComment(long id, String content, long bookId) {
+    public String updateComment(String id, String content, String bookId) {
         var updatedComment = commentService.update(id, content, bookId);
         return commentConverter.commentToString(updatedComment);
     }
 
     @ShellMethod(value = "Delete comment by id", key = "cdel")
-    public void deleteComment(long id) {
+    public void deleteComment(String id) {
         commentService.deleteById(id);
     }
 
     @ShellMethod(value = "Find comments by book id", key = "cbybook")
-    public String findCommentsByBookId(long bookId) {
+    public String findCommentsByBookId(String bookId) {
         return commentService.findByBookId(bookId).stream()
                 .map(commentConverter::commentToString)
                 .collect(Collectors.joining("," + System.lineSeparator()));

@@ -19,7 +19,7 @@ public class CommentServiceImpl implements CommentService {
     private final BookRepository bookRepository;
 
     @Override
-    public Optional<Comment> findById(long id) {
+    public Optional<Comment> findById(String id) {
         return commentRepository.findById(String.valueOf(id));
     }
 
@@ -29,28 +29,28 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public List<Comment> findByBookId(long bookId) {
+    public List<Comment> findByBookId(String bookId) {
         return commentRepository.findByBookId(String.valueOf(bookId));
     }
 
     @Override
-    public Comment insert(String content, long bookId) {
+    public Comment insert(String content, String bookId) {
         return save(null, content, bookId);
     }
 
     @Override
-    public Comment update(long id, String content, long bookId) {
+    public Comment update(String id, String content, String bookId) {
         return save(String.valueOf(id), content, bookId);
     }
 
     @Override
-    public void deleteById(long id) {
+    public void deleteById(String id) {
         commentRepository.deleteById(String.valueOf(id));
     }
 
-    private Comment save(String id, String content, long bookId) {
+    private Comment save(String id, String content, String bookId) {
         Book book = bookRepository.findById(String.valueOf(bookId))
-                .orElseThrow(() -> new EntityNotFoundException("Book with id %d not found".formatted(bookId)));
+                .orElseThrow(() -> new EntityNotFoundException("Book with id %s not found".formatted(bookId)));
         Comment comment = new Comment(id, content, book);
         return commentRepository.save(comment);
     }
