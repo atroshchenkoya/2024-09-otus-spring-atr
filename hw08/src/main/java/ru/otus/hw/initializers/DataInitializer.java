@@ -39,24 +39,19 @@ public class DataInitializer implements CommandLineRunner {
     @Override
     public void run(String... args) {
         log.info("Initializing started!!!");
-        // Создаём автора
         Author author = new Author(null, "Leo Tolstoy");
         author = authorRepository.save(author);
 
-        // Создаём жанр
         Genre genre = new Genre(null, "Historical Fiction");
         genre = genreRepository.save(genre);
 
-        // Создаём книгу
         Book book = new Book(null, "War and Peace", author, genre);
         book = bookRepository.save(book);
 
-        // Создаём комментарии для книги
         Comment comment1 = new Comment(null, "A masterpiece of literature!", book);
         Comment comment2 = new Comment(null, "Quite a lengthy read, but worth it.", book);
         Comment comment3 = new Comment(null, "Loved the historical detail and characters.", book);
 
-        // Сохраняем комментарии
         commentRepository.save(comment1);
         commentRepository.save(comment2);
         commentRepository.save(comment3);
